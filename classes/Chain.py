@@ -4,7 +4,7 @@ from random import randint
 
 
 def generate_random_string():
-    return randint(0, 1000)
+    return str(randint(0, 1000))
 
 
 class Chain:
