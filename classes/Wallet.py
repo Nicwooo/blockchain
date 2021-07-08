@@ -12,7 +12,13 @@ class Wallet:
         self.generate_unique_id()
 
     def generate_unique_id(self):
-        self.unique_id = uuid.uuid1()
+        generated_id = uuid.uuid1()
+        path = 'content/wallets/' + str(generated_id) + '.json'
+
+        if not os.path.isfile(path):
+            self.unique_id = generated_id
+        else:
+            self.generate_unique_id()
 
     def add_balance(self, amount):
         self.balance += amount
