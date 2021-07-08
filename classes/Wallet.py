@@ -1,5 +1,6 @@
 import uuid
 import json
+import os.path
 
 
 class Wallet:
@@ -25,12 +26,26 @@ class Wallet:
     def save(self):
 
         data = {
-            'id': str(self.unique_id),
+            'unique_id': str(self.unique_id),
             'balance': self.balance,
             'history': self.history
         }
 
-        path = "content/wallets/" + str(self.unique_id) + ".json"
+        path = 'content/wallets/' + str(self.unique_id) + '.json'
 
-        with open(path, "w") as jsonFile:
+        with open(path, 'w') as jsonFile:
             json.dump(data, jsonFile)
+
+    def load(self, wallet_id):
+        path = 'content/wallets/' + wallet_id + '.json'
+
+        if os.path.isfile(path):
+            wallet = open(path, 'r')
+
+            wallet = json.load(wallet)
+
+            self.unique_id = wallet['unique_id']
+            self.balance = wallet['balance']
+            self.history = wallet['history']
+
+
