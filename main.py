@@ -1,9 +1,11 @@
 from classes.Wallet import Wallet
+from classes.Block import Block
 
-first = Wallet()
-first.save()
+block = Block()
+block.add_transaction('013269d8-dff0-11eb-a7df-8091331df61a', 'fffb22a4-dfef-11eb-a859-8091331df61a', 30)
+block.add_transaction('013269d8-dff0-11eb-a7df-8091331df61a', 'fffb22a4-dfef-11eb-a859-8091331df61a', 20)
 
-second = Wallet()
-second.load(str(first.unique_id))
 
-print(second.unique_id)
+trans = block.get_transaction(1)
+
+print(trans)

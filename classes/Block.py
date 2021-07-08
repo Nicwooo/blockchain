@@ -1,4 +1,5 @@
 import os
+import json
 import hashlib
 
 
@@ -8,19 +9,52 @@ class Block:
     parent_hash = ''
     transactions = []
 
+    def __init__(self):
+        pass
+
     def check_hash(self):
         expected_hash = hashlib.sha256(base_hash.encode()).hexdigest()
 
         return expected_hash == self.hash
 
-    def add_transaction(self):
-        pass
+    def add_transaction(self, transmitter_id, receiver_id, amount):
+        transmitter_path = 'content/wallets/' + transmitter_id + '.json'
+        receiver_path = 'content/wallets/' + receiver_id + '.json'
 
-    def get_transaction(self):
-        pass
+        if os.path.isfile(transmitter_path) and os.path.isfile(receiver_path):
+            transmitter_wallet = open(transmitter_path, 'r')
+            transmitter_wallet = json.load(transmitter_wallet)
+
+            receiver_wallet = open(receiver_path, 'r')
+            receiver_wallet = json.load(receiver_wallet)
+
+            transmitter_wallet['balance'] -= amount
+            receiver_wallet['balance'] += amount
+
+            with open(transmitter_path, 'w') as transmitter_data:
+                json.dump(transmitter_wallet, transmitter_data)
+
+            with open(receiver_path, 'w') as receiver_data:
+                json.dump(receiver_wallet, receiver_data)
+
+            new_transaction = {
+                "number": len(self.transactions),
+                "transmitter": transmitter_id,
+                "receiver": receiver_id,
+                "amount": amount
+            }
+
+            self.transactions.append(new_transaction)
+
+    def get_transaction(self, transaction_number):
+
+        if self.transactions[transaction_number]:
+            return self.transactions[transaction_number]
+        else:
+            return 'Le numéro de la transaction est incorrect'
 
     def get_weight(self):
-        path = 'content/blocs/' + self.hash + '.json'
+        path = 'content/blocks/' + self.hash + '.json'
         file_stats = os.stat(path)
 
         return file_stats.st_size
@@ -33,13 +67,13 @@ class Block:
             'transactions': self.transactions
         }
 
-        path = 'content/blocs/' + self.hash + '.json'
+        path = 'content/blocks/' + self.hash + '.json'
 
         with open(path, 'w') as jsonFile:
             json.dump(data, jsonFile)
 
     def load(self, block_hash):
-        path = 'content/blocs/' + block_hash + '.json'
+        path = 'content/blocks/' + block_hash + '.json'
 
         if os.path.isfile(path):
             block = open(path, 'r')
