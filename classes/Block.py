@@ -23,7 +23,27 @@ class Block:
         return file_stats.st_size
 
     def save(self):
-        pass
+        data = {
+            'base_hash': self.base_hash,
+            'hash': self.hash,
+            'parent_hash': self.parent_hash,
+            'transactions': self.transactions
+        }
 
-    def load(self):
-        pass
+        path = 'content/blocs/' + self.hash + '.json'
+
+        with open(path, 'w') as jsonFile:
+            json.dump(data, jsonFile)
+
+    def load(self, block_hash):
+        path = 'content/blocs/' + block_hash + '.json'
+
+        if os.path.isfile(path):
+            block = open(path, 'r')
+
+            block = json.load(block)
+
+            self.base_hash = block['base_hash']
+            self.hash = block['hash']
+            self.parent_hash = block['parent_hash']
+            self.transactions = block['transactions']
