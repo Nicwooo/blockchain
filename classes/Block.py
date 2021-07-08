@@ -16,8 +16,8 @@ class Block:
     def get_transaction(self):
         pass
 
-    def get_weight(self, block):
-        path = 'content/blocs/' + block + '.json'
+    def get_weight(self):
+        path = 'content/blocs/' + self.hash + '.json'
         file_stats = os.stat(path)
 
         return file_stats.st_size
