@@ -1,4 +1,5 @@
 import os
+import hashlib
 
 
 class Block:
@@ -8,7 +9,9 @@ class Block:
     transactions = []
 
     def check_hash(self):
-        pass
+        expected_hash = hashlib.sha256(base_hash.encode()).hexdigest()
+
+        return expected_hash == self.hash
 
     def add_transaction(self):
         pass
