@@ -9,8 +9,9 @@ class Block:
     parent_hash = ''
     transactions = []
 
-    def __init__(self):
-        pass
+    def __init__(self, base_hash, hash):
+        self.base_hash = base_hash
+        self.hash = hash
 
     def check_hash(self):
         expected_hash = hashlib.sha256(base_hash.encode()).hexdigest()

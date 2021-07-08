@@ -1,5 +1,6 @@
 import hashlib
 import os.path
+import json
 from random import randint
 
 
@@ -19,22 +20,39 @@ class Chain:
         hash = hashlib.sha256(string_to_test.encode()).hexdigest()
 
         if self.verify_hash(hash):
-            return hash
+            add_block(hash)
         else:
             self.generate_hash()
 
     def verify_hash(self, hash_to_verify):
-        for i in self.blocks:
-            if self.blocks[i].hash == hash_to_verify:
-                return False
+        print(hash_to_verify)
+        if len(self.blocks) > 0:
+            for i in self.blocks:
+                if self.blocks[i].hash == hash_to_verify:
+                    return False
 
-        return hash_to_verify[:4] == '0000'
+        if not hash_to_verify[:4] == '0000':
+            return False
 
-    def add_block(self):
-        pass
+        return True
 
-    def get_block(self):
-        pass
+    def add_block(self, base_hash, hash):
+        path = 'content/blocks/' + hash + '.json'
+
+        if not os.path.isfile(path):
+            new_block = Block(base_hash, hash)
+            new_block.save()
+
+    def get_block(self, hash):
+        path = 'content/blocks/' + hash + '.json'
+
+        if os.path.isfile(path):
+            block = open(path, 'r')
+
+            return json.load(block)
+
+        else:
+            return 'Ce bloc n\'éxiste pas'
 
     def add_transaction(self):
         pass
