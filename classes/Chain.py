@@ -95,7 +95,7 @@ class Chain:
                 print('Le bloc spécifié n\'a pas été trouvé')
                 return False
 
-            if block.get_weight():
+            if block.get_weight() <= 256000:
                 new_transaction = block.add_transaction(
                     transmitter_id,
                     receiver_id,

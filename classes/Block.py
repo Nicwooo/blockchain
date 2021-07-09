@@ -58,17 +58,17 @@ class Block:
             return False
 
     def get_transaction(self, transaction_number):
+        for transaction in self.transactions:
+            if transaction['number'] == transaction_number:
+                return transaction
 
-        if self.transactions[transaction_number]:
-            return self.transactions[transaction_number]
-        else:
-            return 'Le numéro de la transaction est incorrect'
+        return 'Le numéro de la transaction n\'a pas été trouvé'
 
     def get_weight(self):
         path = 'content/blocks/' + self.hash + '.json'
         file_stats = os.stat(path)
 
-        return file_stats.st_size <= 256000
+        return file_stats.st_size
 
     def save(self):
         data = {
