@@ -21,7 +21,7 @@ def generate_random_string():
 
 class Chain:
     blocks = []
-    last_transaction_number = 0
+    last_transaction_number = 1
 
     def __init__(self):
         pass
@@ -119,4 +119,7 @@ class Chain:
                         return block
 
     def get_last_transaction_number(self):
-        pass
+        if self.last_transaction_number - 1 > 0:
+            return self.last_transaction_number - 1
+        else:
+            return 'Aucune transaction n\'a été effectuée'

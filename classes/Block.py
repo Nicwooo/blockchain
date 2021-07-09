@@ -15,11 +15,17 @@ class Block:
         self.parent_hash = parent_hash
 
     def check_hash(self):
-        expected_hash = hashlib.sha256(base_hash.encode()).hexdigest()
+        expected_hash = hashlib.sha256(self.base_hash.encode()).hexdigest()
 
         return expected_hash == self.hash
 
-    def add_transaction(self, transmitter_id, receiver_id, amount, transaction_number):
+    def add_transaction(
+            self,
+            transmitter_id,
+            receiver_id,
+            amount,
+            transaction_number
+    ):
         transmitter_path = 'content/wallets/' + transmitter_id + '.json'
         receiver_path = 'content/wallets/' + receiver_id + '.json'
 

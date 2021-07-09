@@ -53,5 +53,3 @@ class Wallet:
             self.unique_id = wallet['unique_id']
             self.balance = wallet['balance']
             self.history = wallet['history']
-
-
