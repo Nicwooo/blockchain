@@ -26,8 +26,8 @@ class Wallet:
     def sub_balance(self, amount):
         self.balance -= amount
 
-    def send(self):
-        pass
+    def send(self, transaction):
+        self.history.append(transaction)
 
     def save(self):
 

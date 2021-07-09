@@ -38,15 +38,18 @@ class Block:
             transmitter_wallet.sub_balance(amount)
             receiver_wallet.add_balance(amount)
 
-            transmitter_wallet.save()
-            receiver_wallet.save()
-
             new_transaction = {
                 "number": transaction_number,
                 "transmitter": transmitter_id,
                 "receiver": receiver_id,
                 "amount": amount
             }
+
+            transmitter_wallet.send(new_transaction)
+            receiver_wallet.send(new_transaction)
+
+            transmitter_wallet.save()
+            receiver_wallet.save()
 
             self.transactions.append(new_transaction)
             return True
