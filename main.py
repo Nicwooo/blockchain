@@ -19,8 +19,11 @@ print("wallet1 balance (after using add_balance(40)): " + str(wallet1.balance))
 wallet1.sub_balance(20)  # The balance should have been reduced by 20
 print('wallet1 balance (after using sub_balance(20)): ' + str(wallet1.balance))
 
-wallet1.load(str(wallet1.unique_id)) # We should have the first balance back (= 100)
-print('wallet1 balance (after using load() on itself): ' + str(wallet1.balance))
+wallet1.load(str(wallet1.unique_id))
+# We should have the first balance back (= 100)
+print(
+    'wallet1 balance (after using load() on itself): ' + str(wallet1.balance)
+)
 
 # Made another wallet for later
 wallet2 = Wallet()
@@ -28,8 +31,10 @@ wallet2.save()
 
 # --------- BLOCK TESTS ---------
 
-# To explicitly test the entire Block class, we need to manually create a new Block
-# In a normal way, the base_hash, the hash and the parent_hash would be incorrect
+# To explicitly test the entire Block class,
+# we need to manually create a new Block
+# In a normal way, the base_hash, the hash
+# and the parent_hash would be incorrect
 block1 = Block(
     'base_hash test',
     str(hashlib.sha256('base_hash test'.encode()).hexdigest()),
@@ -37,11 +42,15 @@ block1 = Block(
     list()
 )
 
-block1.save() # Watch the content/blocks files to see if it worked
+block1.save()  # Watch the content/blocks files to see if it worked
 
-print("Is the hash correct ? " + str(block1.check_hash()))  # It should returns "True"
+print(
+    "Is the hash correct ? "
+    + str(block1.check_hash())
+)  # It should returns "True"
 
-# To see this result, you should watch the wallets balances and the block transactions list
+# To see this result, you should watch the
+# wallets balances and the block transactions list
 block1.add_transaction(str(wallet1.unique_id), str(wallet2.unique_id), 15, 24)
 
 # It should returns the previous transaction
@@ -72,8 +81,12 @@ chain = Chain()
 # It should generate a new block in content/blocks
 chain.generate_hash()
 
-# This hash already exists : the method should returns False
-print('Is this hash correct ? ' + str(chain.verify_hash(str(chain.blocks[0].hash))))
+# This hash already exists
+# the method should returns False
+print(
+    'Is this hash correct ? '
+    + str(chain.verify_hash(str(chain.blocks[0].hash)))
+)
 
 # It should create a new block in content/blocks
 chain.add_block(

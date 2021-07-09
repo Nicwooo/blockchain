@@ -78,7 +78,12 @@ class Chain:
             block = open(path, 'r')
             block = json.load(block)
 
-            response = Block(block['base_hash'], block['hash'], block['parent_hash'], block['transactions'])
+            response = Block(
+                block['base_hash'],
+                block['hash'],
+                block['parent_hash'],
+                block['transactions']
+            )
 
             return response
         else:
