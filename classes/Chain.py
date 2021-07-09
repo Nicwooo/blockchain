@@ -5,7 +5,8 @@ import random
 import string
 from classes.Block import Block
 import sys
-sys.setrecursionlimit(10**6)
+
+sys.setrecursionlimit(10 ** 6)
 
 
 def generate_random_string():
@@ -98,7 +99,6 @@ class Chain:
                 )
 
                 if new_transaction:
-
                     data = {
                         'base_hash': block.base_hash,
                         'hash': block.hash,
@@ -111,8 +111,12 @@ class Chain:
 
                     self.last_transaction_number += 1
 
-    def find_transaction(self):
-        pass
+    def find_transaction(self, transaction_number):
+        for block in self.blocks:
+            if len(block.transactions) > 0:
+                for transaction in block.transactions:
+                    if transaction.number == transaction_number:
+                        return block
 
     def get_last_transaction_number(self):
         pass
