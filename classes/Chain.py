@@ -21,7 +21,7 @@ def generate_random_string():
 
 class Chain:
     blocks = []
-    last_transaction_number = 1
+    last_transaction_number = 0
 
     def __init__(self):
         pass
@@ -36,7 +36,6 @@ class Chain:
             self.generate_hash()
 
     def verify_hash(self, hash_to_verify):
-        print(hash_to_verify)
         if len(self.blocks) > 0:
             for block in self.blocks:
                 if block.hash == hash_to_verify:
@@ -100,23 +99,25 @@ class Chain:
                     transmitter_id,
                     receiver_id,
                     amount,
-                    self.get_last_transaction_number()
+                    self.last_transaction_number + 1
                 )
 
                 if new_transaction:
                     block.save()
 
+                    for element in self.blocks:
+                        if element.hash == block.hash:
+                            self.blocks[self.blocks.index(element)] = block
+
                     self.last_transaction_number += 1
 
     def find_transaction(self, transaction_number):
         for block in self.blocks:
+            print(block.transactions)
             if len(block.transactions) > 0:
                 for transaction in block.transactions:
-                    if transaction.number == transaction_number:
-                        return block
+                    if transaction['number'] == transaction_number:
+                        return transaction['number']
 
     def get_last_transaction_number(self):
-        if self.last_transaction_number - 1 >= 0:
-            return self.last_transaction_number
-        else:
-            return 'Aucune transaction n\'a été effectuée'
+        return self.last_transaction_number

@@ -3,7 +3,7 @@ from classes.Block import Block
 from classes.Chain import Chain
 import hashlib
 
-# WALLET TESTS
+# --------- WALLET TESTS ---------
 wallet1 = Wallet()
 print('First wallet1 id: ' + str(wallet1.unique_id))
 
@@ -26,7 +26,8 @@ print('wallet1 balance (after using load() on itself): ' + str(wallet1.balance))
 wallet2 = Wallet()
 wallet2.save()
 
-# BLOCK TESTS
+# --------- BLOCK TESTS ---------
+
 # To explicitly test the entire Block class, we need to manually create a new Block
 # In a normal way, the base_hash, the hash and the parent_hash would be incorrect
 block1 = Block(
@@ -65,8 +66,37 @@ block2.load(str(block1.hash))
 # Now the hash should be the same as the hash in block 1
 print('new block2 hash: ' + str(block2.hash))
 
-
-
+# --------- CHAIN TESTS ---------
 chain = Chain()
+
+# It should generate a new block in content/blocks
 chain.generate_hash()
-chain.add_transaction(str(chain.blocks[0].hash), str(wallet1.unique_id), str(wallet2.unique_id), 15)
+
+# This hash already exists : the method should returns False
+print('Is this hash correct ? ' + str(chain.verify_hash(str(chain.blocks[0].hash))))
+
+# It should create a new block in content/blocks
+chain.add_block(
+    'test_hash',
+    hashlib.sha256('test_hash'.encode()).hexdigest()
+)
+
+# It should returns a new Block instance with the asked block data
+new_block = str(chain.get_block(str(chain.blocks[0].hash)))
+print('Block: ' + new_block)
+
+# It should add a new transaction
+# you can see the result in the corresponding block in content.block
+chain.add_transaction(
+    str(chain.blocks[0].hash),
+    str(wallet1.unique_id),
+    str(wallet2.unique_id),
+    15
+)
+
+# Here is another way to see if the transaction worked
+# It also allows us to test the find_transaction() method
+print('Previous transaction: ' + str(chain.find_transaction(1)))
+
+# It should returns the last transaction number (here, 1)
+print('Last transaction number: ' + str(chain.get_last_transaction_number()))
