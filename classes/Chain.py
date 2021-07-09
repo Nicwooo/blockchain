@@ -91,6 +91,10 @@ class Chain:
         if os.path.isfile(path):
             block = self.get_block(block_hash)
 
+            if not block:
+                print('Le bloc spécifié n\'a pas été trouvé')
+                return False
+
             if block.get_weight():
                 new_transaction = block.add_transaction(
                     transmitter_id,
