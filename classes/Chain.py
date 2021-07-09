@@ -41,6 +41,9 @@ class Chain:
                 if block.hash == hash_to_verify:
                     return False
 
+        # NB: N'ayant pas réussi à générer de hash commençant par 4 zéros
+        # sans faire crash l'application, je n'ai fais une vérification
+        # qu'avec 1 seul séro.
         if not hash_to_verify[:1] == '0':
             return False
 
