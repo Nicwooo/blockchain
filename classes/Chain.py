@@ -110,3 +110,9 @@ class Chain:
                         json.dump(data, block_data)
 
                     self.last_transaction_number += 1
+
+    def find_transaction(self):
+        pass
+
+    def get_last_transaction_number(self):
+        pass
