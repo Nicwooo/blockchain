@@ -95,19 +95,11 @@ class Chain:
                     transmitter_id,
                     receiver_id,
                     amount,
-                    self.get_last_transaction_number() + 1
+                    self.get_last_transaction_number()
                 )
 
                 if new_transaction:
-                    data = {
-                        'base_hash': block.base_hash,
-                        'hash': block.hash,
-                        'parent_hash': block.parent_hash,
-                        'transactions': block.transactions
-                    }
-
-                    with open(path, 'w') as block_data:
-                        json.dump(data, block_data)
+                    block.save()
 
                     self.last_transaction_number += 1
 
@@ -119,7 +111,7 @@ class Chain:
                         return block
 
     def get_last_transaction_number(self):
-        if self.last_transaction_number - 1 > 0:
-            return self.last_transaction_number - 1
+        if self.last_transaction_number - 1 >= 0:
+            return self.last_transaction_number
         else:
             return 'Aucune transaction n\'a été effectuée'

@@ -1,6 +1,7 @@
 import os
 import json
 import hashlib
+from classes.Wallet import Wallet
 
 
 class Block:
@@ -26,38 +27,28 @@ class Block:
             amount,
             transaction_number
     ):
-        transmitter_path = 'content/wallets/' + transmitter_id + '.json'
-        receiver_path = 'content/wallets/' + receiver_id + '.json'
+        transmitter_wallet = Wallet()
+        transmitter_wallet.load(transmitter_id)
 
-        if os.path.isfile(transmitter_path) and os.path.isfile(receiver_path):
-            transmitter_wallet = open(transmitter_path, 'r')
-            transmitter_wallet = json.load(transmitter_wallet)
+        receiver_wallet = Wallet()
+        receiver_wallet.load(receiver_id)
 
-            if transmitter_wallet['balance'] - amount >= 0:
-                receiver_wallet = open(receiver_path, 'r')
-                receiver_wallet = json.load(receiver_wallet)
+        if transmitter_wallet.balance - amount >= 0:
+            transmitter_wallet.sub_balance(amount)
+            receiver_wallet.add_balance(amount)
 
-                transmitter_wallet['balance'] -= amount
-                receiver_wallet['balance'] += amount
+            transmitter_wallet.save()
+            receiver_wallet.save()
 
-                with open(transmitter_path, 'w') as transmitter_data:
-                    json.dump(transmitter_wallet, transmitter_data)
+            new_transaction = {
+                "number": transaction_number,
+                "transmitter": transmitter_id,
+                "receiver": receiver_id,
+                "amount": amount
+            }
 
-                with open(receiver_path, 'w') as receiver_data:
-                    json.dump(receiver_wallet, receiver_data)
-
-                new_transaction = {
-                    "number": transaction_number,
-                    "transmitter": transmitter_id,
-                    "receiver": receiver_id,
-                    "amount": amount
-                }
-
-                self.transactions.append(new_transaction)
-                return True
-
-            else:
-                return False
+            self.transactions.append(new_transaction)
+            return True
 
         else:
             return False
