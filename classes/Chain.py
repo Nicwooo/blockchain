@@ -5,7 +5,7 @@ from random import randint
 
 
 def generate_random_string():
-    return str(randint(0, 1000))
+    return str(randint(0, 10))
 
 
 class Chain:
@@ -17,10 +17,10 @@ class Chain:
 
     def generate_hash(self):
         string_to_test = generate_random_string()
-        hash = hashlib.sha256(string_to_test.encode()).hexdigest()
+        hash_to_test = hashlib.sha256(string_to_test.encode()).hexdigest()
 
-        if self.verify_hash(hash):
-            add_block(hash)
+        if self.verify_hash(hash_to_test):
+            add_block(hash_to_test)
         else:
             self.generate_hash()
 
@@ -36,15 +36,24 @@ class Chain:
 
         return True
 
-    def add_block(self, base_hash, hash):
-        path = 'content/blocks/' + hash + '.json'
+    def add_block(self, base_hash, tested_hash):
+        path = 'content/blocks/' + tested_hash + '.json'
 
         if not os.path.isfile(path):
-            new_block = Block(base_hash, hash)
+            new_block = Block(base_hash, tested_hash)
             new_block.save()
 
-    def get_block(self, hash):
-        path = 'content/blocks/' + hash + '.json'
+            if os.path.isfile(path):
+                self.blocks.append(new_block)
+
+            else:
+                print('Erreur lors de la création du bloc')
+
+        else:
+            print('Ce bloc existe déjà')
+
+    def get_block(self, asked_hash):
+        path = 'content/blocks/' + asked_hash + '.json'
 
         if os.path.isfile(path):
             block = open(path, 'r')
@@ -54,5 +63,14 @@ class Chain:
         else:
             return 'Ce bloc n\'éxiste pas'
 
-    def add_transaction(self):
-        pass
+    def add_transaction(self, block):
+        path = 'content/blocks/' + block + '.json'
+
+        if block.get_weight():
+            new_transaction = block.add_transaction(transmitter_id, receiver_id, amount, self.last_transaction_number)
+
+            if new_transaction and os.path.isfile(path):
+                with open(path, 'w') as block_data:
+                    json.dump(block, block_data)
+
+                self.last_transaction_number += 1
