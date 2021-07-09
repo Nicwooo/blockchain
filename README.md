@@ -13,6 +13,9 @@ Enfin, le point d'entrée du projet est le fichier principal "main.py" : c'est c
 Afin de tester la blockchain, il suffit de cloner le projet sur votre ordinateur.
 Ensuite, ouvrez un IDE (pycharm par exemple), et lancez le fichier "main.py" (il faut le run).
 
+/!\ Aucune blockchain n'est éxistante à l'ouverture du projet : en lançant le fichier "main.py", une blockchain
+sera créée par les différents tests présents /!\
+
 Vous devriez avoir de nombreux résultats qui vont apparaître dans la console intégrée à votre IDE :
 ces résultats sont les résultats obtenus après avoir lancé chacune des méthodes de chacune des classes de la blockchain.
 
@@ -25,6 +28,8 @@ directement dans la "base de données", il faut donc s'y rendre pour pouvoir les
 Finalement, vous pouvez ajouter des points d'arrêt dans le fichier main.py si vous souhaitez tester moins de méthodes :
 néanmoins, certains tests nécessitent les résultats obtenus plus haut, veillez à ne pas changer l'ordre des appels
 dans le fichier "main.py". Vous pouvez également y ajouter vos propres tests.
+
+NB: Ce projet respecte les normes PEP8 : vous pouvez donc tester le respect de ces normes avec flake8.
 
 ## Technologie(s) utilisée(s)
 Python
