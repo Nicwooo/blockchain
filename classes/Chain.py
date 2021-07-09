@@ -95,7 +95,7 @@ class Chain:
                     transmitter_id,
                     receiver_id,
                     amount,
-                    self.last_transaction_number
+                    self.get_last_transaction_number() + 1
                 )
 
                 if new_transaction:
