@@ -27,7 +27,7 @@ class Block:
             transmitter_wallet = open(transmitter_path, 'r')
             transmitter_wallet = json.load(transmitter_wallet)
 
-            if transmitter_wallet['balance'] - amount > 0:
+            if transmitter_wallet['balance'] - amount >= 0:
                 receiver_wallet = open(receiver_path, 'r')
                 receiver_wallet = json.load(receiver_wallet)
 

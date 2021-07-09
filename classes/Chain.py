@@ -28,8 +28,8 @@ class Chain:
     def verify_hash(self, hash_to_verify):
         print(hash_to_verify)
         if len(self.blocks) > 0:
-            for i in self.blocks:
-                if self.blocks[i].hash == hash_to_verify:
+            for block in self.blocks:
+                if block.hash == hash_to_verify:
                     return False
 
         if not hash_to_verify[:1] == '0':
@@ -42,7 +42,7 @@ class Chain:
         parent_hash = '00'
 
         if len(self.blocks) > 0:
-            parent_hash = self.blocks[len(self.blocks) - 1]['base_hash']
+            parent_hash = self.blocks[len(self.blocks) - 1].base_hash
 
         if not os.path.isfile(path):
 
@@ -52,11 +52,15 @@ class Chain:
             if os.path.isfile(path):
                 self.blocks.append(new_block)
 
+                return True
+
             else:
                 print('Erreur lors de la création du bloc')
 
         else:
             print('Ce bloc existe déjà')
+
+        return False
 
     def get_block(self, asked_hash):
         path = 'content/blocks/' + asked_hash + '.json'
@@ -69,14 +73,31 @@ class Chain:
         else:
             return 'Ce bloc n\'éxiste pas'
 
-    def add_transaction(self, block):
-        path = 'content/blocks/' + block + '.json'
+    def add_transaction(self, block_hash, transmitter_id, receiver_id, amount):
+        path = 'content/blocks/' + block_hash + '.json'
 
-        if block.get_weight():
-            new_transaction = block.add_transaction(transmitter_id, receiver_id, amount, self.last_transaction_number)
+        if os.path.isfile(path):
+            block = Block('', '', '')
+            block.load(block_hash)
 
-            if new_transaction and os.path.isfile(path):
-                with open(path, 'w') as block_data:
-                    json.dump(block, block_data)
+            if block.get_weight():
+                new_transaction = block.add_transaction(
+                    transmitter_id,
+                    receiver_id,
+                    amount,
+                    self.last_transaction_number
+                )
 
-                self.last_transaction_number += 1
+                if new_transaction:
+
+                    data = {
+                        'base_hash': block.base_hash,
+                        'hash': block.hash,
+                        'parent_hash': block.parent_hash,
+                        'transactions': block.transactions
+                    }
+
+                    with open(path, 'w') as block_data:
+                        json.dump(data, block_data)
+
+                    self.last_transaction_number += 1
