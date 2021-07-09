@@ -1,12 +1,21 @@
 import hashlib
 import os.path
 import json
-from random import randint
+import random
+import string
 from classes.Block import Block
+import sys
+sys.setrecursionlimit(10**6)
 
 
 def generate_random_string():
-    return str(randint(0, 1000))
+    letters_and_digits = string.ascii_lowercase + string.digits
+    random_string = ''
+
+    for i in range(1000):
+        random_string += random.choice(letters_and_digits)
+
+    return random_string
 
 
 class Chain:
