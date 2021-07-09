@@ -9,16 +9,17 @@ class Block:
     parent_hash = ''
     transactions = []
 
-    def __init__(self, base_hash, hash):
+    def __init__(self, base_hash, hash, parent_hash):
         self.base_hash = base_hash
         self.hash = hash
+        self.parent_hash = parent_hash
 
     def check_hash(self):
         expected_hash = hashlib.sha256(base_hash.encode()).hexdigest()
 
         return expected_hash == self.hash
 
-    def add_transaction(self, transmitter_id, receiver_id, amount):
+    def add_transaction(self, transmitter_id, receiver_id, amount, transaction_number):
         transmitter_path = 'content/wallets/' + transmitter_id + '.json'
         receiver_path = 'content/wallets/' + receiver_id + '.json'
 
@@ -26,26 +27,34 @@ class Block:
             transmitter_wallet = open(transmitter_path, 'r')
             transmitter_wallet = json.load(transmitter_wallet)
 
-            receiver_wallet = open(receiver_path, 'r')
-            receiver_wallet = json.load(receiver_wallet)
+            if transmitter_wallet['balance'] - amount > 0:
+                receiver_wallet = open(receiver_path, 'r')
+                receiver_wallet = json.load(receiver_wallet)
 
-            transmitter_wallet['balance'] -= amount
-            receiver_wallet['balance'] += amount
+                transmitter_wallet['balance'] -= amount
+                receiver_wallet['balance'] += amount
 
-            with open(transmitter_path, 'w') as transmitter_data:
-                json.dump(transmitter_wallet, transmitter_data)
+                with open(transmitter_path, 'w') as transmitter_data:
+                    json.dump(transmitter_wallet, transmitter_data)
 
-            with open(receiver_path, 'w') as receiver_data:
-                json.dump(receiver_wallet, receiver_data)
+                with open(receiver_path, 'w') as receiver_data:
+                    json.dump(receiver_wallet, receiver_data)
 
-            new_transaction = {
-                "number": len(self.transactions),
-                "transmitter": transmitter_id,
-                "receiver": receiver_id,
-                "amount": amount
-            }
+                new_transaction = {
+                    "number": transaction_number,
+                    "transmitter": transmitter_id,
+                    "receiver": receiver_id,
+                    "amount": amount
+                }
 
-            self.transactions.append(new_transaction)
+                self.transactions.append(new_transaction)
+                return True
+
+            else:
+                return False
+
+        else:
+            return False
 
     def get_transaction(self, transaction_number):
 
@@ -58,7 +67,7 @@ class Block:
         path = 'content/blocks/' + self.hash + '.json'
         file_stats = os.stat(path)
 
-        return file_stats.st_size
+        return file_stats.st_size <= 256000
 
     def save(self):
         data = {
