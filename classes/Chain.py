@@ -5,14 +5,15 @@ import random
 import string
 from classes.Block import Block
 import sys
-sys.setrecursionlimit(10**6)
+
+sys.setrecursionlimit(10 ** 6)
 
 
 def generate_random_string():
     letters_and_digits = string.ascii_lowercase + string.digits
     random_string = ''
 
-    for i in range(1000):
+    for i in range(100):
         random_string += random.choice(letters_and_digits)
 
     return random_string
@@ -35,7 +36,6 @@ class Chain:
             self.generate_hash()
 
     def verify_hash(self, hash_to_verify):
-        print(hash_to_verify)
         if len(self.blocks) > 0:
             for block in self.blocks:
                 if block.hash == hash_to_verify:
@@ -55,7 +55,7 @@ class Chain:
 
         if not os.path.isfile(path):
 
-            new_block = Block(base_hash, tested_hash, parent_hash)
+            new_block = Block(base_hash, tested_hash, parent_hash, list())
             new_block.save()
 
             if os.path.isfile(path):
@@ -76,37 +76,48 @@ class Chain:
 
         if os.path.isfile(path):
             block = open(path, 'r')
+            block = json.load(block)
 
-            return json.load(block)
+            response = Block(block['base_hash'], block['hash'], block['parent_hash'], block['transactions'])
 
+            return response
         else:
-            return 'Ce bloc n\'éxiste pas'
+            return False
 
     def add_transaction(self, block_hash, transmitter_id, receiver_id, amount):
         path = 'content/blocks/' + block_hash + '.json'
 
         if os.path.isfile(path):
-            block = Block('', '', '')
-            block.load(block_hash)
+            block = self.get_block(block_hash)
 
-            if block.get_weight():
+            if not block:
+                print('Le bloc spécifié n\'a pas été trouvé')
+                return False
+
+            if block.get_weight() <= 256000:
                 new_transaction = block.add_transaction(
                     transmitter_id,
                     receiver_id,
                     amount,
-                    self.last_transaction_number
+                    self.last_transaction_number + 1
                 )
 
                 if new_transaction:
+                    block.save()
 
-                    data = {
-                        'base_hash': block.base_hash,
-                        'hash': block.hash,
-                        'parent_hash': block.parent_hash,
-                        'transactions': block.transactions
-                    }
-
-                    with open(path, 'w') as block_data:
-                        json.dump(data, block_data)
+                    for element in self.blocks:
+                        if element.hash == block.hash:
+                            self.blocks[self.blocks.index(element)] = block
 
                     self.last_transaction_number += 1
+
+    def find_transaction(self, transaction_number):
+        for block in self.blocks:
+            print(block.transactions)
+            if len(block.transactions) > 0:
+                for transaction in block.transactions:
+                    if transaction['number'] == transaction_number:
+                        return transaction['number']
+
+    def get_last_transaction_number(self):
+        return self.last_transaction_number

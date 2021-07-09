@@ -1,6 +1,7 @@
 import os
 import json
 import hashlib
+from classes.Wallet import Wallet
 
 
 class Block:
@@ -9,65 +10,65 @@ class Block:
     parent_hash = ''
     transactions = []
 
-    def __init__(self, base_hash, hash, parent_hash):
+    def __init__(self, base_hash, hash, parent_hash, transactions):
         self.base_hash = base_hash
         self.hash = hash
         self.parent_hash = parent_hash
+        self.transactions = transactions
 
     def check_hash(self):
-        expected_hash = hashlib.sha256(base_hash.encode()).hexdigest()
+        expected_hash = hashlib.sha256(self.base_hash.encode()).hexdigest()
 
         return expected_hash == self.hash
 
-    def add_transaction(self, transmitter_id, receiver_id, amount, transaction_number):
-        transmitter_path = 'content/wallets/' + transmitter_id + '.json'
-        receiver_path = 'content/wallets/' + receiver_id + '.json'
+    def add_transaction(
+            self,
+            transmitter_id,
+            receiver_id,
+            amount,
+            transaction_number
+    ):
+        transmitter_wallet = Wallet()
+        transmitter_wallet.load(transmitter_id)
 
-        if os.path.isfile(transmitter_path) and os.path.isfile(receiver_path):
-            transmitter_wallet = open(transmitter_path, 'r')
-            transmitter_wallet = json.load(transmitter_wallet)
+        receiver_wallet = Wallet()
+        receiver_wallet.load(receiver_id)
 
-            if transmitter_wallet['balance'] - amount >= 0:
-                receiver_wallet = open(receiver_path, 'r')
-                receiver_wallet = json.load(receiver_wallet)
+        if transmitter_wallet.balance - amount >= 0:
+            transmitter_wallet.sub_balance(amount)
+            receiver_wallet.add_balance(amount)
 
-                transmitter_wallet['balance'] -= amount
-                receiver_wallet['balance'] += amount
+            new_transaction = {
+                "number": transaction_number,
+                "transmitter": transmitter_id,
+                "receiver": receiver_id,
+                "amount": amount
+            }
 
-                with open(transmitter_path, 'w') as transmitter_data:
-                    json.dump(transmitter_wallet, transmitter_data)
+            transmitter_wallet.send(new_transaction)
+            receiver_wallet.send(new_transaction)
 
-                with open(receiver_path, 'w') as receiver_data:
-                    json.dump(receiver_wallet, receiver_data)
+            transmitter_wallet.save()
+            receiver_wallet.save()
 
-                new_transaction = {
-                    "number": transaction_number,
-                    "transmitter": transmitter_id,
-                    "receiver": receiver_id,
-                    "amount": amount
-                }
-
-                self.transactions.append(new_transaction)
-                return True
-
-            else:
-                return False
+            self.transactions.append(new_transaction)
+            return True
 
         else:
             return False
 
     def get_transaction(self, transaction_number):
+        for transaction in self.transactions:
+            if transaction['number'] == transaction_number:
+                return transaction
 
-        if self.transactions[transaction_number]:
-            return self.transactions[transaction_number]
-        else:
-            return 'Le numéro de la transaction est incorrect'
+        return 'Le numéro de la transaction n\'a pas été trouvé'
 
     def get_weight(self):
         path = 'content/blocks/' + self.hash + '.json'
         file_stats = os.stat(path)
 
-        return file_stats.st_size <= 256000
+        return file_stats.st_size
 
     def save(self):
         data = {
