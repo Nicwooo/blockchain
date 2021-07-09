@@ -13,7 +13,7 @@ def generate_random_string():
     letters_and_digits = string.ascii_lowercase + string.digits
     random_string = ''
 
-    for i in range(1000):
+    for i in range(100):
         random_string += random.choice(letters_and_digits)
 
     return random_string
@@ -56,7 +56,7 @@ class Chain:
 
         if not os.path.isfile(path):
 
-            new_block = Block(base_hash, tested_hash, parent_hash)
+            new_block = Block(base_hash, tested_hash, parent_hash, list())
             new_block.save()
 
             if os.path.isfile(path):
@@ -77,18 +77,19 @@ class Chain:
 
         if os.path.isfile(path):
             block = open(path, 'r')
+            block = json.load(block)
 
-            return json.load(block)
+            response = Block(block['base_hash'], block['hash'], block['parent_hash'], block['transactions'])
 
+            return response
         else:
-            return 'Ce bloc n\'éxiste pas'
+            return False
 
     def add_transaction(self, block_hash, transmitter_id, receiver_id, amount):
         path = 'content/blocks/' + block_hash + '.json'
 
         if os.path.isfile(path):
-            block = Block('', '', '')
-            block.load(block_hash)
+            block = self.get_block(block_hash)
 
             if block.get_weight():
                 new_transaction = block.add_transaction(

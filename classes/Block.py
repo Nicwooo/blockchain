@@ -10,10 +10,11 @@ class Block:
     parent_hash = ''
     transactions = []
 
-    def __init__(self, base_hash, hash, parent_hash):
+    def __init__(self, base_hash, hash, parent_hash, transactions):
         self.base_hash = base_hash
         self.hash = hash
         self.parent_hash = parent_hash
+        self.transactions = transactions
 
     def check_hash(self):
         expected_hash = hashlib.sha256(self.base_hash.encode()).hexdigest()
